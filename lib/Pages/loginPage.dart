@@ -1,5 +1,8 @@
+import 'package:chatify/Pages/Home.dart';
+import 'package:chatify/UiHelper.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+import 'package:toast/toast.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -11,11 +14,36 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   late double _deviceHeight;
   late double _deviceWidth;
+
+  String email = "", password = "";
+  TextEditingController _emailController = TextEditingController();
+  TextEditingController _passWordContorller = TextEditingController();
+
+  final _formKey = GlobalKey<FormState>();
+
+  userLogin() async {
+    try {
+      await FirebaseAuth.instance
+          .signInWithEmailAndPassword(email: email, password: password);
+      Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => HomePage(),
+          ));
+    } on FirebaseAuthException catch (e) {
+      String? error = e.message;
+      // ignore: use_build_context_synchronously
+      ToastContext().init(context);
+      Toast.show("$error", gravity: Toast.top, duration: Toast.lengthLong);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     _deviceHeight = MediaQuery.of(context).size.height;
     _deviceWidth = MediaQuery.of(context).size.width;
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: Colors.black,
       body: Center(
         child: Container(
@@ -31,6 +59,7 @@ class _LoginPageState extends State<LoginPage> {
 
   Widget _loginPageUi() {
     return Container(
+      height: _deviceHeight,
       //color: Colors.red,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -42,19 +71,25 @@ class _LoginPageState extends State<LoginPage> {
           ),
           _inputForm(),
           SizedBox(
-            height: 20,
+            height: 30,
           ),
-          InkWell(onTap: () {}, child: textButton('LOGIN')),
+          InkWell(
+              onTap: () {
+                if (_formKey.currentState!.validate()) {
+                  setState(() {
+                    email = _emailController.text;
+                    password = _passWordContorller.text;
+                  });
+                }
+                userLogin();
+              },
+              child: textButton('LOGIN', Colors.blue, Colors.white)),
           SizedBox(
             height: 20,
           ),
           InkWell(
             onTap: () {},
-            splashColor: Colors.blue,
-            child: Text(
-              'REGISTER',
-              style: TextStyle(color: Colors.white60),
-            ),
+            child: textButton("REGISTER", Colors.black, Colors.white60),
           )
         ],
       ),
@@ -83,52 +118,36 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Widget _inputForm() {
-    return Container(
+    return Form(
+      key: _formKey,
+      onChanged: () {},
       child: Column(
         children: <Widget>[
-          formField('Email Address'),
+          formField(
+              hintText: 'Email Address',
+              obsecureText: false,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please Enter the Email';
+                }
+                return null;
+              },
+              controller: _emailController),
           SizedBox(
             height: 25,
           ),
-          formField('Password')
+          formField(
+            hintText: 'Password',
+            obsecureText: true,
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Please Enter the Password';
+              }
+              return null;
+            },
+            controller: _passWordContorller,
+          )
         ],
-      ),
-    );
-  }
-
-  Widget formField(text) {
-    return SizedBox(
-      child: TextFormField(
-        // controller: controller,
-
-        cursorColor: Colors.white60,
-        obscureText: true,
-        decoration: InputDecoration(
-          hintText: text,
-          hintStyle: TextStyle(color: Colors.white60),
-          focusColor: Colors.white60,
-          enabledBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.white60, width: 2)),
-          focusedBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.white60, width: 2)),
-        ),
-      ),
-    );
-  }
-
-  Widget textButton(buttonText) {
-    return Container(
-      height: 50,
-      width: double.infinity,
-      alignment: Alignment.center,
-      decoration: BoxDecoration(
-          color: Colors.blue, borderRadius: BorderRadius.circular(5)),
-      child: Text(
-        buttonText,
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: 20,
-        ),
       ),
     );
   }
