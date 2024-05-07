@@ -1,7 +1,9 @@
 import 'package:chatify/Pages/Home.dart';
+import 'package:chatify/Pages/registerPage.dart';
 import 'package:chatify/UiHelper.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:toast/toast.dart';
 
 class LoginPage extends StatefulWidget {
@@ -34,7 +36,7 @@ class _LoginPageState extends State<LoginPage> {
       String? error = e.message;
       // ignore: use_build_context_synchronously
       ToastContext().init(context);
-      Toast.show("$error", gravity: Toast.top, duration: Toast.lengthLong);
+      Toast.show("$error", gravity: Toast.top, duration: 3);
     }
   }
 
@@ -47,7 +49,7 @@ class _LoginPageState extends State<LoginPage> {
       backgroundColor: Colors.black,
       body: Center(
         child: Container(
-          height: _deviceHeight * 0.70,
+          height: _deviceHeight * 0.8,
           width: _deviceWidth,
           //color: Colors.amber,
           padding: EdgeInsets.symmetric(horizontal: 25),
@@ -59,15 +61,18 @@ class _LoginPageState extends State<LoginPage> {
 
   Widget _loginPageUi() {
     return Container(
-      height: _deviceHeight,
+      height: _deviceHeight * 0.8,
       //color: Colors.red,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         mainAxisSize: MainAxisSize.max,
         children: [
-          _heading(),
+          Heading1(
+            Heading: 'Welcome Back !',
+            SubHeading: 'Please login to your account. ',
+          ),
           SizedBox(
-            height: 15,
+            height: 25,
           ),
           _inputForm(),
           SizedBox(
@@ -80,38 +85,30 @@ class _LoginPageState extends State<LoginPage> {
                     email = _emailController.text;
                     password = _passWordContorller.text;
                   });
+                  userLogin();
                 }
-                userLogin();
               },
-              child: textButton('LOGIN', Colors.blue, Colors.white)),
+              child: textButton(
+                  buttonText: 'LOGIN',
+                  backgroundColor: Colors.blue,
+                  textColor: Colors.white)),
           SizedBox(
             height: 20,
           ),
-          InkWell(
-            onTap: () {},
-            child: textButton("REGISTER", Colors.black, Colors.white60),
-          )
-        ],
-      ),
-    );
-  }
-
-  Widget _heading() {
-    return Container(
-      //color: Colors.green,
-      height: _deviceHeight * 0.12,
-      width: double.infinity,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Welcome Back !',
-            style: TextStyle(color: Colors.white, fontSize: 30),
-          ),
-          Text(
-            'Please login to your account. ',
-            style: TextStyle(color: Colors.white60, fontSize: 20),
-          )
+          RichText(
+              text: TextSpan(children: [
+            TextSpan(
+              text: "Don't have Account ? ",
+              style: TextStyle(color: Colors.white60),
+            ),
+            WidgetSpan(
+                child: InkWell(
+              child: Text(' Register',
+                  style: TextStyle(color: Colors.white, fontSize: 15)),
+              onTap: () => Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => RegisterPage())),
+            ))
+          ])),
         ],
       ),
     );
@@ -126,29 +123,46 @@ class _LoginPageState extends State<LoginPage> {
           formField(
               hintText: 'Email Address',
               obsecureText: false,
-              validator: (value) {
+              validate: (value) {
                 if (value == null || value.isEmpty) {
                   return 'Please Enter the Email';
                 }
                 return null;
               },
               controller: _emailController),
-          SizedBox(
-            height: 25,
-          ),
           formField(
-            hintText: 'Password',
-            obsecureText: true,
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Please Enter the Password';
-              }
-              return null;
-            },
-            controller: _passWordContorller,
-          )
+              hintText: 'Password',
+              obsecureText: true,
+              validate: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please Enter the Password';
+                }
+                return null;
+              },
+              controller: _passWordContorller),
         ],
       ),
     );
   }
+
+  // Widget textButton(
+  //   String buttonText,
+  //   Color backgroundColor,
+  //   Color textColor,
+  // ) {
+  //   return Container(
+  //     height: _deviceHeight * 0.08,
+  //     width: double.infinity,
+  //     alignment: Alignment.center,
+  //     decoration: BoxDecoration(
+  //         color: backgroundColor, borderRadius: BorderRadius.circular(1)),
+  //     child: Text(
+  //       buttonText,
+  //       style: TextStyle(
+  //         color: textColor,
+  //         fontSize: 20,
+  //       ),
+  //     ),
+  //   );
+  // }
 }

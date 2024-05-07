@@ -1,37 +1,62 @@
 import 'package:flutter/material.dart';
 
-class formField extends StatelessWidget {
-  formField(
-      {super.key,
-      required String hintText,
-      required bool obsecureText,
-      required FormFieldValidator validator,
-      required TextEditingController controller});
+class Heading1 extends StatelessWidget {
+  final String Heading;
+  final String SubHeading;
+  Heading1({super.key, required this.Heading, required this.SubHeading});
 
   @override
   Widget build(BuildContext context) {
-    var hintText;
-    var obsecureText;
-    var validator;
-    var controller;
+    return Container(
+      //color: Colors.green,
+      width: double.infinity,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            Heading,
+            style: TextStyle(color: Colors.white, fontSize: 30),
+          ),
+          Text(
+            SubHeading,
+            style: TextStyle(color: Colors.white60, fontSize: 20),
+          )
+        ],
+      ),
+    );
+    ;
+  }
+}
 
-    return SizedBox(
-      child: TextFormField(
-        controller: controller,
-        cursorColor: Colors.white60,
-        onSaved: (newValue) {},
-        validator: validator,
-        obscureText: obsecureText,
-        style: TextStyle(color: Colors.white60),
-        decoration: InputDecoration(
-          hintText: hintText,
-          hintStyle: TextStyle(color: Colors.white60),
-          focusColor: Colors.white60,
-          enabledBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.white60, width: 2)),
-          focusedBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.white60, width: 2)),
-        ),
+class formField extends StatelessWidget {
+  final String hintText;
+  final TextEditingController controller;
+  final FormFieldValidator validate;
+  final bool? obsecureText;
+
+  formField(
+      {required this.hintText,
+      required this.controller,
+      required this.validate,
+      this.obsecureText});
+
+  @override
+  Widget build(BuildContext context) {
+    return TextFormField(
+      cursorColor: Colors.white60,
+      validator: validate,
+      controller: controller,
+      style: TextStyle(color: Colors.white60),
+      obscureText: obsecureText!,
+      decoration: InputDecoration(
+        contentPadding: EdgeInsets.symmetric(vertical: 30),
+        hintText: hintText,
+        hintStyle: TextStyle(color: Colors.white60),
+        focusColor: Colors.white60,
+        enabledBorder: UnderlineInputBorder(
+            borderSide: BorderSide(color: Colors.white60, width: 2)),
+        focusedBorder: UnderlineInputBorder(
+            borderSide: BorderSide(color: Colors.white60, width: 2)),
       ),
     );
   }
@@ -39,29 +64,32 @@ class formField extends StatelessWidget {
 
 // ignore: must_be_immutable
 class textButton extends StatelessWidget {
-  textButton(String buttonText, Color backgroundColor, Color textColor,
-      {super.key});
-
   late double _deviceHeight;
+  late double _deviceWidth;
+  //variables
+  final String buttonText;
+  final Color textColor;
+  final Color backgroundColor;
+
+  textButton(
+      {super.key,
+      required this.buttonText,
+      required this.textColor,
+      required this.backgroundColor});
 
   @override
   Widget build(BuildContext context) {
-    var textColor;
-    var buttonText;
-    var backgroundColor;
-
     _deviceHeight = MediaQuery.of(context).size.height;
+    _deviceWidth = MediaQuery.of(context).size.width;
     return Container(
       height: _deviceHeight * 0.08,
-      width: double.infinity,
-      alignment: Alignment.center,
+      width: _deviceWidth,
       decoration: BoxDecoration(
-          color: backgroundColor, borderRadius: BorderRadius.circular(1)),
-      child: Text(
-        buttonText,
-        style: TextStyle(
-          color: textColor,
-          fontSize: 20,
+          color: backgroundColor, borderRadius: BorderRadius.circular(2)),
+      child: Center(
+        child: Text(
+          buttonText,
+          style: TextStyle(color: Colors.white, fontSize: 20),
         ),
       ),
     );
