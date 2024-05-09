@@ -24,7 +24,6 @@ class Heading1 extends StatelessWidget {
         ],
       ),
     );
-    ;
   }
 }
 
@@ -32,13 +31,13 @@ class formField extends StatelessWidget {
   final String hintText;
   final TextEditingController controller;
   final FormFieldValidator validate;
-  final bool? obsecureText;
+  final bool obsecureText;
 
   formField(
       {required this.hintText,
       required this.controller,
       required this.validate,
-      this.obsecureText});
+      required this.obsecureText});
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +46,7 @@ class formField extends StatelessWidget {
       validator: validate,
       controller: controller,
       style: TextStyle(color: Colors.white60),
-      obscureText: obsecureText!,
+      obscureText: obsecureText,
       decoration: InputDecoration(
         contentPadding: EdgeInsets.symmetric(vertical: 30),
         hintText: hintText,

@@ -1,9 +1,7 @@
-import 'package:chatify/Pages/Home.dart';
+import 'package:chatify/Pages/VerificationPage.dart';
 import 'package:chatify/Pages/loginPage.dart';
 import 'package:chatify/UiHelper.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:toast/toast.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -13,8 +11,8 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
-  late double _deviceHeight;
-  late double _deviceWidth;
+  late double deviceHeight;
+  late double deviceWidth;
 
   TextEditingController nameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
@@ -23,27 +21,10 @@ class _RegisterPageState extends State<RegisterPage> {
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   String name = "", email = "", password = "";
 
-  register() async {
-    try {
-      await FirebaseAuth.instance
-          .createUserWithEmailAndPassword(email: email, password: password);
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => HomePage()));
-    } on FirebaseAuthException catch (e) {
-      String? error = e.message;
-      ToastContext().init(context);
-      Toast.show('{$error}',
-          gravity: Toast.top,
-          duration: 3,
-          backgroundColor: Colors.black,
-          textStyle: TextStyle(color: Colors.white));
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    _deviceHeight = MediaQuery.of(context).size.height;
-    _deviceWidth = MediaQuery.of(context).size.width;
+    deviceHeight = MediaQuery.of(context).size.height;
+    deviceWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       backgroundColor: Colors.black,
       resizeToAvoidBottomInset: false,
@@ -51,7 +32,7 @@ class _RegisterPageState extends State<RegisterPage> {
         child: Container(
             // color: Colors.red,
             margin: EdgeInsets.symmetric(horizontal: 25),
-            width: _deviceWidth,
+            width: deviceWidth,
             child: _registerUi()),
       ),
     );
@@ -82,7 +63,15 @@ class _RegisterPageState extends State<RegisterPage> {
                     email = emailController.text;
                     password = passwordController.text;
                   });
-                  register();
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => Verification(
+                          Name: name,
+                          Email: email,
+                          Password: password,
+                        ),
+                      ));
                 }
               },
               child: textButton(
@@ -90,7 +79,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 backgroundColor: Colors.blue,
                 textColor: Colors.white,
               )),
-          SizedBox(
+          const SizedBox(
             height: 20,
           ),
           RichText(
@@ -123,7 +112,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 controller: nameController,
                 validate: (value) {
                   if (value == null || value.isEmpty) {
-                    return "Please confirm Password";
+                    return "Please Enter Name";
                   }
                   return null;
                 },
@@ -133,7 +122,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 controller: emailController,
                 validate: (value) {
                   if (value == null || value.isEmpty) {
-                    return "Please confirm Password";
+                    return "Please Enter Email";
                   }
                   return null;
                 },
@@ -143,7 +132,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 controller: passwordController,
                 validate: (value) {
                   if (value == null || value.isEmpty) {
-                    return "Please confirm Password";
+                    return "Please Enter password";
                   }
                   return null;
                 },
@@ -151,19 +140,4 @@ class _RegisterPageState extends State<RegisterPage> {
           ],
         ));
   }
-
-  // Widget _textButton(String buttonText, Color backgroundColor) {
-  //   return Container(
-  //     height: _deviceHeight * 0.08,
-  //     width: _deviceWidth,
-  //     decoration: BoxDecoration(
-  //         color: backgroundColor, borderRadius: BorderRadius.circular(2)),
-  //     child: Center(
-  //       child: Text(
-  //         buttonText,
-  //         style: TextStyle(color: Colors.white, fontSize: 20),
-  //       ),
-  //     ),
-  //   );
-  // }
 }

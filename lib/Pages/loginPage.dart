@@ -144,25 +144,4 @@ class _LoginPageState extends State<LoginPage> {
       ),
     );
   }
-
-  // Widget textButton(
-  //   String buttonText,
-  //   Color backgroundColor,
-  //   Color textColor,
-  // ) {
-  //   return Container(
-  //     height: _deviceHeight * 0.08,
-  //     width: double.infinity,
-  //     alignment: Alignment.center,
-  //     decoration: BoxDecoration(
-  //         color: backgroundColor, borderRadius: BorderRadius.circular(1)),
-  //     child: Text(
-  //       buttonText,
-  //       style: TextStyle(
-  //         color: textColor,
-  //         fontSize: 20,
-  //       ),
-  //     ),
-  //   );
-  // }
 }

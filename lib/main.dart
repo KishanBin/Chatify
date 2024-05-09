@@ -1,4 +1,3 @@
-import 'package:chatify/Pages/loginPage.dart';
 import 'package:chatify/Pages/registerPage.dart';
 import 'package:firebase_core/firebase_core.dart';
 
@@ -30,7 +29,7 @@ class _MyAppState extends State<MyApp> {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
       ),
-      home:RegisterPage(),
+      home: RegisterPage(),
     );
   }
 }
