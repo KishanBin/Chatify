@@ -39,6 +39,8 @@ dependencies:
   toast: ^0.3.0
   email_otp: ^2.1.2
   cloud_firestore: ^4.17.3
+  #To store user data in device
+  shared_preferences: ^2.2.3
 
 dev_dependencies:
   flutter_test:

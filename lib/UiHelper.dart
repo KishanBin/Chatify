@@ -70,11 +70,12 @@ class textButton extends StatelessWidget {
   final Color textColor;
   final Color backgroundColor;
 
-  textButton(
-      {super.key,
-      required this.buttonText,
-      required this.textColor,
-      required this.backgroundColor});
+  textButton({
+    super.key,
+    required this.buttonText,
+    required this.textColor,
+    required this.backgroundColor,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -92,5 +93,13 @@ class textButton extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+class dialog {
+  static void showProgressBar(BuildContext context) {
+    showDialog(
+        context: context,
+        builder: (_) => Center(child: CircularProgressIndicator()));
   }
 }

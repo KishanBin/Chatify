@@ -102,7 +102,7 @@ class _VerificationState extends State<Verification> {
             .set({"Name": name, "Email": email, "Password": password});
         print("Data Inserted to FireStore");
         //Once the verification and Other Process done then redirect to LoginPage.
-        Navigator.push(
+        Navigator.pushReplacement(
             context, MaterialPageRoute(builder: (context) => LoginPage()));
       } else {
         print('User not created');

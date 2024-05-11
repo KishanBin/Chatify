@@ -1,19 +1,21 @@
 import 'package:chatify/Pages/Home.dart';
 import 'package:chatify/Pages/registerPage.dart';
 import 'package:chatify/UiHelper.dart';
+import 'package:chatify/main.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toast/toast.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  State<LoginPage> createState() => LoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class LoginPageState extends State<LoginPage> {
   late double _deviceHeight;
   late double _deviceWidth;
 
@@ -23,16 +25,28 @@ class _LoginPageState extends State<LoginPage> {
 
   final _formKey = GlobalKey<FormState>();
 
+  static String loginKey = "unknown";
+
+  @override
+  void initState() {
+    super.initState();
+
+    checkUser();
+  }
+
   userLogin() async {
+    dialog.showProgressBar(context);
     try {
       await FirebaseAuth.instance
           .signInWithEmailAndPassword(email: email, password: password);
+      Navigator.pop(context);
       Navigator.pushReplacement(
           context,
           MaterialPageRoute(
             builder: (context) => HomePage(),
           ));
     } on FirebaseAuthException catch (e) {
+      Navigator.pop(context);
       String? error = e.message;
       // ignore: use_build_context_synchronously
       ToastContext().init(context);
@@ -79,13 +93,15 @@ class _LoginPageState extends State<LoginPage> {
             height: 30,
           ),
           InkWell(
-              onTap: () {
+              onTap: () async {
                 if (_formKey.currentState!.validate()) {
                   setState(() {
                     email = _emailController.text;
                     password = _passWordContorller.text;
                   });
                   userLogin();
+                  var pref = await SharedPreferences.getInstance();
+                  pref.setString(loginKey, "known");
                 }
               },
               child: textButton(
@@ -143,5 +159,17 @@ class _LoginPageState extends State<LoginPage> {
         ],
       ),
     );
+  }
+
+  void checkUser() async {
+    var pref = await SharedPreferences.getInstance();
+    var check = pref.getString(loginKey);
+
+    if (check != null) {
+      if (check == "known") {
+        Navigator.pushReplacement(
+            context, MaterialPageRoute(builder: (context) => HomePage()));
+      }
+    }
   }
 }

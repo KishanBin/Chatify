@@ -1,4 +1,4 @@
-import 'package:chatify/Pages/registerPage.dart';
+import 'package:chatify/Pages/loginPage.dart';
 import 'package:firebase_core/firebase_core.dart';
 
 import 'package:flutter/material.dart';
@@ -18,10 +18,10 @@ class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
   @override
-  State<MyApp> createState() => _MyAppState();
+  State<MyApp> createState() => MyAppState();
 }
 
-class _MyAppState extends State<MyApp> {
+class MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -29,7 +29,7 @@ class _MyAppState extends State<MyApp> {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
       ),
-      home: RegisterPage(),
+      home: LoginPage(),
     );
   }
 }
