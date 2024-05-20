@@ -5,12 +5,17 @@ import 'package:flutter/material.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-      options: FirebaseOptions(
-          apiKey: "AIzaSyDPMspLYZ1t0192wbRuxZqQjhRDJj2s6hg",
-          appId: "1:138345063557:android:9ba56ce16bb263647bf5ec",
-          messagingSenderId: "138345063557",
-          projectId: "chatify-11669"));
+  if (Firebase.apps.length == 0) {
+    await Firebase.initializeApp(
+        options: const FirebaseOptions(
+            apiKey: "AIzaSyDPMspLYZ1t0192wbRuxZqQjhRDJj2s6hg",
+            appId: "1:138345063557:android:9ba56ce16bb263647bf5ec",
+            messagingSenderId: "138345063557",
+            projectId: "chatify-11669",
+            storageBucket: "chatify-11669.appspot.com"));
+  } else {
+    print('Firebase already initialized');
+  }
   runApp(const MyApp());
 }
 
@@ -27,9 +32,9 @@ class MyAppState extends State<MyApp> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.white),
       ),
-      home: LoginPage(),
+      home: const LoginPage(),
     );
   }
 }

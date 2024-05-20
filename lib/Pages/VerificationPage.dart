@@ -1,3 +1,4 @@
+import 'package:chatify/apis.dart';
 import 'package:chatify/Pages/loginPage.dart';
 import 'package:chatify/UiHelper.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -20,10 +21,10 @@ class Verification extends StatefulWidget {
       required this.Password});
 
   @override
-  State<Verification> createState() => _VerificationState();
+  State<Verification> createState() => VerificationState();
 }
 
-class _VerificationState extends State<Verification> {
+class VerificationState extends State<Verification> {
   late double deviceHeight;
   late double deviceWidth;
 
@@ -95,15 +96,18 @@ class _VerificationState extends State<Verification> {
         //Creating the user with email and password
         await FirebaseAuth.instance
             .createUserWithEmailAndPassword(email: email, password: password);
-        //Sending the user data to FireStore for Storing
-        await FirebaseFirestore.instance
-            .collection("Users")
-            .doc(name)
-            .set({"Name": name, "Email": email, "Password": password});
+        //Creating the new user in firestore
+        Center(
+          child: CircularProgressIndicator(
+            color: Colors.blue,
+          ),
+        );
+        await APIs.createUser(name, email).then((value) {
+          Navigator.pushReplacement(
+              context, MaterialPageRoute(builder: (context) => LoginPage()));
+        });
         print("Data Inserted to FireStore");
         //Once the verification and Other Process done then redirect to LoginPage.
-        Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (context) => LoginPage()));
       } else {
         print('User not created');
       }
@@ -155,7 +159,7 @@ class _VerificationState extends State<Verification> {
         ),
         Form(
           key: _formKey,
-          child: formField(
+          child: formField1(
             hintText: "OTP",
             controller: otpController,
             validate: (value) {

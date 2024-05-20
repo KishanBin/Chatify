@@ -1,10 +1,8 @@
 import 'package:chatify/Pages/Home.dart';
 import 'package:chatify/Pages/registerPage.dart';
 import 'package:chatify/UiHelper.dart';
-import 'package:chatify/main.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toast/toast.dart';
 
@@ -16,8 +14,8 @@ class LoginPage extends StatefulWidget {
 }
 
 class LoginPageState extends State<LoginPage> {
-  late double _deviceHeight;
-  late double _deviceWidth;
+  late double deviceHeight;
+  late double deviceWidth;
 
   String email = "", password = "";
   TextEditingController _emailController = TextEditingController();
@@ -39,12 +37,13 @@ class LoginPageState extends State<LoginPage> {
     try {
       await FirebaseAuth.instance
           .signInWithEmailAndPassword(email: email, password: password);
-      Navigator.pop(context);
+      Center(
+        child: CircularProgressIndicator(
+          color: Colors.blue,
+        ),
+      );
       Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => HomePage(),
-          ));
+          context, MaterialPageRoute(builder: (context) => HomePage()));
     } on FirebaseAuthException catch (e) {
       Navigator.pop(context);
       String? error = e.message;
@@ -56,15 +55,15 @@ class LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    _deviceHeight = MediaQuery.of(context).size.height;
-    _deviceWidth = MediaQuery.of(context).size.width;
+    deviceHeight = MediaQuery.of(context).size.height;
+    deviceWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: Colors.black,
       body: Center(
         child: Container(
-          height: _deviceHeight * 0.8,
-          width: _deviceWidth,
+          height: deviceHeight * 0.8,
+          width: deviceWidth,
           //color: Colors.amber,
           padding: EdgeInsets.symmetric(horizontal: 25),
           child: _loginPageUi(),
@@ -75,7 +74,7 @@ class LoginPageState extends State<LoginPage> {
 
   Widget _loginPageUi() {
     return Container(
-      height: _deviceHeight * 0.8,
+      height: deviceHeight * 0.8,
       //color: Colors.red,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -136,7 +135,7 @@ class LoginPageState extends State<LoginPage> {
       onChanged: () {},
       child: Column(
         children: <Widget>[
-          formField(
+          formField1(
               hintText: 'Email Address',
               obsecureText: false,
               validate: (value) {
@@ -146,7 +145,7 @@ class LoginPageState extends State<LoginPage> {
                 return null;
               },
               controller: _emailController),
-          formField(
+          formField1(
               hintText: 'Password',
               obsecureText: true,
               validate: (value) {

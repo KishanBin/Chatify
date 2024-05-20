@@ -63,6 +63,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     email = emailController.text;
                     password = passwordController.text;
                   });
+                   
                   Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -107,7 +108,7 @@ class _RegisterPageState extends State<RegisterPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            formField(
+            formField1(
                 hintText: 'Name',
                 controller: nameController,
                 validate: (value) {
@@ -117,7 +118,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   return null;
                 },
                 obsecureText: false),
-            formField(
+            formField1(
                 hintText: "Email Address",
                 controller: emailController,
                 validate: (value) {
@@ -127,7 +128,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   return null;
                 },
                 obsecureText: false),
-            formField(
+            formField1(
                 hintText: "Password",
                 controller: passwordController,
                 validate: (value) {

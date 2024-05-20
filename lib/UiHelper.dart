@@ -1,5 +1,10 @@
+import 'dart:developer';
+
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
+// Custom widgets to create Heading
 class Heading1 extends StatelessWidget {
   final String Heading;
   final String SubHeading;
@@ -27,13 +32,14 @@ class Heading1 extends StatelessWidget {
   }
 }
 
-class formField extends StatelessWidget {
+// USE TO CREATE TextFormField of Registration and Login
+class formField1 extends StatelessWidget {
   final String hintText;
   final TextEditingController controller;
   final FormFieldValidator validate;
   final bool obsecureText;
 
-  formField(
+  formField1(
       {required this.hintText,
       required this.controller,
       required this.validate,
@@ -61,6 +67,40 @@ class formField extends StatelessWidget {
   }
 }
 
+// TextFormField for ProfilePage
+
+class formField2 extends StatelessWidget {
+  final String InitialValue;
+  final FormFieldValidator validate;
+  final String Lable;
+
+  formField2(
+      {required this.InitialValue,
+      required this.validate,
+      required this.Lable});
+
+  @override
+  Widget build(BuildContext context) {
+    return TextFormField(
+        initialValue: InitialValue,
+        validator: validate,
+        cursorColor: Colors.white,
+        style: TextStyle(color: Colors.white, fontSize: 20),
+        decoration: InputDecoration(
+          label: Text(
+            Lable,
+            style: TextStyle(fontSize: 15, color: Colors.white60),
+          ),
+          focusColor: Colors.white60,
+          enabledBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Colors.white60, width: 2)),
+          focusedBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Colors.white60, width: 2)),
+        ));
+  }
+}
+
+// USE TO CREATE CUSTOM BUTTON
 // ignore: must_be_immutable
 class textButton extends StatelessWidget {
   late double _deviceHeight;
@@ -96,10 +136,49 @@ class textButton extends StatelessWidget {
   }
 }
 
+//USE TO SHOW ProgressBar !
 class dialog {
   static void showProgressBar(BuildContext context) {
     showDialog(
         context: context,
         builder: (_) => Center(child: CircularProgressIndicator()));
+  }
+}
+
+//card view on home page
+// ignore: must_be_immutable
+class chatCard extends StatelessWidget {
+  chatCard({super.key, required this.Snapshot});
+
+  AsyncSnapshot Snapshot;
+  @override
+  Widget build(BuildContext context) {
+
+    return Card(
+      child: ListView.builder(
+        itemCount: Snapshot.data!.docs.length,
+        itemBuilder: (context, index) => ListTile(
+          leading: Snapshot.data.docs[index]['Image'] != ""
+              ? CircleAvatar(
+                  child: CachedNetworkImage(
+                    imageUrl: "${Snapshot.data!.docs[index]['Image']}",
+                    imageBuilder: (context, imageProvider) => Container(
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        image: DecorationImage(
+                            image: imageProvider, fit: BoxFit.cover),
+                      ),
+                    ),
+                    placeholder: (context, url) => CircularProgressIndicator(),
+                    errorWidget: (context, url, error) => Icon(Icons.error),
+                  ),
+                )
+              : Image.asset('Assets/Image/defaultAvatar.png'),
+          title: Text("${Snapshot.data!.docs[index]['Name']}"),
+          subtitle: Text("${Snapshot.data!.docs[index]['About']}"),
+          trailing: Text("Last_seen"),
+        ),
+      ),
+    );
   }
 }
