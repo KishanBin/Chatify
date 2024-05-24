@@ -45,7 +45,6 @@ class LoginPageState extends State<LoginPage> {
       Navigator.pushReplacement(
           context, MaterialPageRoute(builder: (context) => HomePage()));
     } on FirebaseAuthException catch (e) {
-      Navigator.pop(context);
       String? error = e.message;
       // ignore: use_build_context_synchronously
       ToastContext().init(context);

@@ -10,15 +10,15 @@ class chatUser {
     required this.About,
     required this.PushToken,
   });
-  late final String LastSeen;
-  late final String CreatedAt;
-  late final String Name;
-  late final bool IsOnline;
-  late final String Email;
-  late final String Image;
-  late final String id;
-  late final String About;
-  late final String PushToken;
+  late String LastSeen;
+  late String CreatedAt;
+  late String Name;
+  late bool IsOnline;
+  late String Email;
+  late String Image;
+  late String id;
+  late String About;
+  late String PushToken;
 
   chatUser.fromJson(Map<String, dynamic> json) {
     LastSeen = json['Last_seen'] ?? '';

@@ -1,7 +1,7 @@
-import 'dart:developer';
-
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:chatify/Models/chatUser.dart';
+import 'package:chatify/Pages/Home.dart';
+import 'package:chatify/chatScreen.dart';
 import 'package:flutter/material.dart';
 
 // Custom widgets to create Heading
@@ -73,17 +73,24 @@ class formField2 extends StatelessWidget {
   final String InitialValue;
   final FormFieldValidator validate;
   final String Lable;
+  final Function(String?) OnSaved;
+  // final TextEditingController controller;
 
-  formField2(
-      {required this.InitialValue,
-      required this.validate,
-      required this.Lable});
+  formField2({
+    required this.InitialValue,
+    required this.validate,
+    required this.Lable,
+    required this.OnSaved,
+  });
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
         initialValue: InitialValue,
         validator: validate,
+        onSaved: OnSaved,
+        keyboardType: TextInputType.multiline,
+        autovalidateMode: AutovalidateMode.always,
         cursorColor: Colors.white,
         style: TextStyle(color: Colors.white, fontSize: 20),
         decoration: InputDecoration(
@@ -141,27 +148,39 @@ class dialog {
   static void showProgressBar(BuildContext context) {
     showDialog(
         context: context,
-        builder: (_) => Center(child: CircularProgressIndicator()));
+        builder: (_) => Center(
+                child: CircularProgressIndicator(
+              color: Colors.black,
+            )));
   }
 }
 
-//card view on home page
-// ignore: must_be_immutable
-class chatCard extends StatelessWidget {
-  chatCard({super.key, required this.Snapshot});
+//User for snakBar
 
-  AsyncSnapshot Snapshot;
+//card view on home page
+class chatCard extends StatelessWidget {
+  chatCard({super.key, required this.user});
+
+  chatUser user;
   @override
   Widget build(BuildContext context) {
-
     return Card(
-      child: ListView.builder(
-        itemCount: Snapshot.data!.docs.length,
-        itemBuilder: (context, index) => ListTile(
-          leading: Snapshot.data.docs[index]['Image'] != ""
+      margin: EdgeInsets.symmetric(horizontal: 10.0, vertical: 4.0),
+      elevation: 0.5,
+      child: InkWell(
+        onTap: () {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (_) => chatScreen(
+                        user: user,
+                      )));
+        },
+        child: ListTile(
+          leading: user.Image != ""
               ? CircleAvatar(
                   child: CachedNetworkImage(
-                    imageUrl: "${Snapshot.data!.docs[index]['Image']}",
+                    imageUrl: "${user.Image}",
                     imageBuilder: (context, imageProvider) => Container(
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
@@ -169,14 +188,16 @@ class chatCard extends StatelessWidget {
                             image: imageProvider, fit: BoxFit.cover),
                       ),
                     ),
-                    placeholder: (context, url) => CircularProgressIndicator(),
+                    placeholder: (context, url) => CircularProgressIndicator(
+                      color: Colors.black,
+                    ),
                     errorWidget: (context, url, error) => Icon(Icons.error),
                   ),
                 )
               : Image.asset('Assets/Image/defaultAvatar.png'),
-          title: Text("${Snapshot.data!.docs[index]['Name']}"),
-          subtitle: Text("${Snapshot.data!.docs[index]['About']}"),
-          trailing: Text("Last_seen"),
+          title: Text("${user.Name}"),
+          subtitle: Text("${user.About}"),
+          trailing: Text("${user.LastSeen}"),
         ),
       ),
     );

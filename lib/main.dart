@@ -1,4 +1,5 @@
 import 'package:chatify/Pages/loginPage.dart';
+import 'package:chatify/chatScreen.dart';
 import 'package:firebase_core/firebase_core.dart';
 
 import 'package:flutter/material.dart';
@@ -32,7 +33,8 @@ class MyAppState extends State<MyApp> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.white),
+        colorScheme: ColorScheme.fromSeed(
+            seedColor: Colors.white, onPrimary: Colors.white),
       ),
       home: const LoginPage(),
     );

@@ -27,18 +27,17 @@ class ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    CollectionReference collecRef =
-        FirebaseFirestore.instance.collection('Users');
     return Scaffold(
+        resizeToAvoidBottomInset: false,
         backgroundColor: Colors.black,
         body: FutureBuilder<DocumentSnapshot>(
-            future: collecRef.doc(APIs.user.uid).get(),
+            future: APIs.getProfile(),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.done) {
                 Map<String, dynamic> data =
                     snapshot.data!.data() as Map<String, dynamic>;
 
-              var profileImageUrl = data['Image'];
+                var profileImageUrl = data['Image'];
 
                 return Center(
                   child: SizedBox(
@@ -138,6 +137,7 @@ class ProfilePageState extends State<ProfilePage> {
                                                   icon: Icon(
                                                     Icons.photo_album,
                                                     size: 50,
+                                                    color: Colors.black,
                                                   ),
                                                 ),
                                                 IconButton(
@@ -147,7 +147,8 @@ class ProfilePageState extends State<ProfilePage> {
                                                       Navigator.pop(context);
                                                     },
                                                     icon: Icon(
-                                                      Icons.camera,
+                                                      Icons.camera_alt_rounded,
+                                                      color: Colors.black,
                                                       size: 50,
                                                     ))
                                               ],
@@ -183,9 +184,20 @@ class ProfilePageState extends State<ProfilePage> {
                                   InitialValue: '${data['Name']}',
                                   validate: (value) {
                                     if (value == null || value.isEmpty) {
-                                      return 'Write a Quate';
+                                      return 'Enter your Name';
                                     }
                                     return null;
+                                  },
+                                  OnSaved: (value) {
+                                    if (snapshot.connectionState ==
+                                        ConnectionState.done) {
+                                      FirebaseFirestore.instance
+                                          .collection("Users")
+                                          .doc(APIs.meUser.uid)
+                                          .update({"Name": value}).then(
+                                              (value) => print(
+                                                  "Name Updated Successfully"));
+                                    }
                                   },
                                 ),
                                 SizedBox(
@@ -200,7 +212,44 @@ class ProfilePageState extends State<ProfilePage> {
                                     }
                                     return null;
                                   },
+                                  OnSaved: (value) {
+                                    if (snapshot.connectionState ==
+                                        ConnectionState.done) {
+                                      FirebaseFirestore.instance
+                                          .collection("Users")
+                                          .doc(APIs.meUser.uid)
+                                          .update({
+                                        "About": value
+                                      }).then((value) => print(
+                                              "About updated Successfully"));
+                                    }
+                                  },
                                 ),
+                                SizedBox(
+                                  height: 50,
+                                ),
+                                ElevatedButton(
+                                    onPressed: () {
+                                      if (profileFormKey.currentState!
+                                          .validate()) {
+                                        profileFormKey.currentState!.save();
+                                      }
+                                      var snackbar = SnackBar(
+                                        content: Text(
+                                          "Profile Updated Successfully",
+                                          style: TextStyle(color: Colors.black),
+                                        ),
+                                        backgroundColor: Colors.white,
+                                        behavior: SnackBarBehavior.floating,
+                                        margin: EdgeInsets.only(bottom: 20),
+                                      );
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(snackbar);
+                                    },
+                                    child: Text(
+                                      "Update",
+                                      style: TextStyle(color: Colors.black),
+                                    )),
                               ],
                             ),
                           ),
@@ -221,7 +270,8 @@ class ProfilePageState extends State<ProfilePage> {
 
   pikingImage(ImageSource source) async {
     try {
-      final image = await ImagePicker().pickImage(source: source);
+      final image =
+          await ImagePicker().pickImage(source: source, imageQuality: 80);
       if (image == null) {
         return;
       } else {
@@ -253,7 +303,7 @@ class ProfilePageState extends State<ProfilePage> {
 
         FirebaseFirestore.instance
             .collection('Users')
-            .doc(APIs.user.uid)
+            .doc(APIs.meUser.uid)
             .update({"Image": url}).then((value) {
           print("Image updated in Firebase Storage");
           setState(() {});
@@ -268,6 +318,4 @@ class ProfilePageState extends State<ProfilePage> {
       print('No image selected');
     }
   }
-
-
 }

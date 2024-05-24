@@ -1,13 +1,13 @@
-import 'dart:convert';
-import 'dart:math';
-
+import 'dart:developer';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:chatify/Models/chatUser.dart';
 import 'package:chatify/Pages/ProfilePage.dart';
 import 'package:chatify/Pages/loginPage.dart';
 import 'package:chatify/UiHelper.dart';
 import 'package:chatify/apis.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -15,10 +15,14 @@ class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<HomePage> createState() => HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class HomePageState extends State<HomePage> {
+  static bool isSearching = false;
+  var filterUser;
+  List<chatUser> list = [];
+  @override
   void initState() {
     super.initState();
   }
@@ -35,49 +39,132 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          centerTitle: true,
-          title: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              InkWell(
-                onTap: (){
-                  Navigator.push(context,MaterialPageRoute(builder: (context)=> ProfilePage()));
-                },
-                child: CircleAvatar(
-                  child:Image.asset(
-                      'Assets/Image/defaultAvatar.png'),
-                ),
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: Scaffold(
+          appBar: AppBar(
+            bottom: PreferredSize(
+              preferredSize: const Size.fromHeight(4.0),
+              child: Container(
+                color: Colors.grey,
+                height: 1.0,
               ),
-              Text('Chatify'),
+            ),
+            automaticallyImplyLeading: false,
+            leading: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: FutureBuilder<DocumentSnapshot>(
+                  future: APIs.getProfile(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.done) {
+                      Map<String, dynamic> data =
+                          snapshot.data!.data() as Map<String, dynamic>;
+                      String profileIcon = data["Image"];
+                      return InkWell(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => ProfilePage()));
+                        },
+                        child: CircleAvatar(
+                          child: profileIcon != ""
+                              ? CachedNetworkImage(
+                                  imageUrl: profileIcon,
+                                  imageBuilder: (context, imageProvider) =>
+                                      Container(
+                                    decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        image: DecorationImage(
+                                            image: imageProvider,
+                                            fit: BoxFit.cover)),
+                                  ),
+                                )
+                              : Image.asset('Assets/Image/defaultAvatar.png'),
+                        ),
+                      );
+                    } else {
+                      return Center(
+                        child: CircularProgressIndicator(
+                          color: Colors.blue,
+                        ),
+                      );
+                    }
+                  }),
+            ),
+            centerTitle: true,
+            title: isSearching
+                ? TextField(
+                    decoration: InputDecoration(
+                        hintText: " Email....", border: InputBorder.none),
+                    autofocus: true,
+                    //login to search the user
+                    onChanged: (val) {
+                      if (val.isNotEmpty) {
+                        filterUser = FirebaseFirestore.instance
+                            .collection("Users")
+                            .where("Email", isEqualTo: val)
+                            .snapshots();
+                      }
+                      setState(() {
+                        filterUser;
+                      });
+                    },
+                  )
+                : Text('Chatify'),
+            actions: [
+              IconButton(
+                  onPressed: () {
+                    setState(() {
+                      isSearching = !isSearching;
+                      log("Button " + isSearching.toString());
+                    });
+                  },
+                  icon: Icon(isSearching
+                      ? CupertinoIcons.clear_circled_solid
+                      : Icons.search)),
+              SizedBox(
+                width: 5,
+              ),
               IconButton(
                 onPressed: Logout,
                 icon: Icon(Icons.logout_rounded),
               ),
             ],
           ),
-        ),
-        body: StreamBuilder<Object>(
-            stream: APIs.GetAllUser(),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.active) {
-                if (snapshot.hasData) {
-                  return chatCard(Snapshot: snapshot);
-                } else if (snapshot.hasError) {
-                  return Center(
-                    child: Text(snapshot.hasError.toString()),
-                  );
+          body: StreamBuilder<QuerySnapshot>(
+              stream: isSearching ? filterUser : APIs.GetAllUser(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.active) {
+                  final data = snapshot.data?.docs;
+                  list = data
+                          ?.map((e) => chatUser
+                              .fromJson(e.data() as Map<String, dynamic>))
+                          .toList() ??
+                      [];
+                  if (snapshot.hasData) {
+                    return ListView.builder(
+                      itemCount: list.length,
+                      physics: BouncingScrollPhysics(),
+                      itemBuilder: (context, index) {
+                        return chatCard(user: list[index]);
+                      },
+                    );
+                  } else if (snapshot.hasError) {
+                    return Center(
+                      child: Text(snapshot.hasError.toString()),
+                    );
+                  } else {
+                    return Center(
+                      child: Text('No Data Found!'),
+                    );
+                  }
                 } else {
                   return Center(
-                    child: Text('No Data Found!'),
+                    child: CircularProgressIndicator(),
                   );
                 }
-              } else {
-                return Center(
-                  child: CircularProgressIndicator(),
-                );
-              }
-            }));
+              })),
+    );
   }
 }
