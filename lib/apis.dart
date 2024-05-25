@@ -40,10 +40,14 @@ class APIs {
   }
 
   //for getting all user from firebase
-  static Stream<QuerySnapshot<Map<String, dynamic>>> GetAllUser() {
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getAllUser() {
     return FirebaseFirestore.instance
         .collection("Users")
         .where('id', isNotEqualTo: meUser.uid)
         .snapshots();
+  }
+
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getAllMessages() {
+    return FirebaseFirestore.instance.collection("Messages").snapshots();
   }
 }

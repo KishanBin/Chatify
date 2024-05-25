@@ -29,7 +29,7 @@ class ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     return Scaffold(
         resizeToAvoidBottomInset: false,
-        backgroundColor: Colors.black,
+        // backgroundColor: Colors.black,
         body: FutureBuilder<DocumentSnapshot>(
             future: APIs.getProfile(),
             builder: (context, snapshot) {
@@ -115,7 +115,7 @@ class ProfilePageState extends State<ProfilePage> {
                               left: 90,
                               child: Container(
                                 decoration: BoxDecoration(
-                                    color: Colors.white,
+                                    color: Colors.black,
                                     borderRadius: BorderRadius.circular(50)),
                                 child: IconButton(
                                     onPressed: () {
@@ -157,7 +157,10 @@ class ProfilePageState extends State<ProfilePage> {
                                         },
                                       );
                                     },
-                                    icon: Icon(Icons.mode_edit_outlined)),
+                                    icon: Icon(
+                                      Icons.mode_edit_outlined,
+                                      color: Colors.white,
+                                    )),
                               ),
                             ),
                           ],
@@ -166,7 +169,7 @@ class ProfilePageState extends State<ProfilePage> {
                           padding: const EdgeInsets.all(8.0),
                           child: Text(
                             data['Email'],
-                            style: TextStyle(color: Colors.white),
+                            style: TextStyle(color: Colors.black),
                           ),
                         ),
                         SizedBox(
@@ -229,6 +232,10 @@ class ProfilePageState extends State<ProfilePage> {
                                   height: 50,
                                 ),
                                 ElevatedButton(
+                                    style: ButtonStyle(
+                                        backgroundColor:
+                                            MaterialStatePropertyAll(
+                                                Colors.black)),
                                     onPressed: () {
                                       if (profileFormKey.currentState!
                                           .validate()) {
@@ -237,9 +244,9 @@ class ProfilePageState extends State<ProfilePage> {
                                       var snackbar = SnackBar(
                                         content: Text(
                                           "Profile Updated Successfully",
-                                          style: TextStyle(color: Colors.black),
+                                          style: TextStyle(color: Colors.white),
                                         ),
-                                        backgroundColor: Colors.white,
+                                        backgroundColor: Colors.black,
                                         behavior: SnackBarBehavior.floating,
                                         margin: EdgeInsets.only(bottom: 20),
                                       );
@@ -248,7 +255,7 @@ class ProfilePageState extends State<ProfilePage> {
                                     },
                                     child: Text(
                                       "Update",
-                                      style: TextStyle(color: Colors.black),
+                                      style: TextStyle(color: Colors.white),
                                     )),
                               ],
                             ),

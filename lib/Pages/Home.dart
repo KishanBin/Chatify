@@ -133,7 +133,7 @@ class HomePageState extends State<HomePage> {
             ],
           ),
           body: StreamBuilder<QuerySnapshot>(
-              stream: isSearching ? filterUser : APIs.GetAllUser(),
+              stream: isSearching ? filterUser : APIs.getAllUser(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.active) {
                   final data = snapshot.data?.docs;

@@ -1,7 +1,10 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:chatify/Models/chatMessage.dart';
 import 'package:chatify/Models/chatUser.dart';
 import 'package:chatify/Pages/Home.dart';
-import 'package:chatify/chatScreen.dart';
+import 'package:chatify/Pages/chatScreen.dart';
+import 'package:chatify/apis.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 // Custom widgets to create Heading
@@ -91,8 +94,8 @@ class formField2 extends StatelessWidget {
         onSaved: OnSaved,
         keyboardType: TextInputType.multiline,
         autovalidateMode: AutovalidateMode.always,
-        cursorColor: Colors.white,
-        style: TextStyle(color: Colors.white, fontSize: 20),
+        cursorColor: Colors.black,
+        style: TextStyle(color: Colors.black, fontSize: 20),
         decoration: InputDecoration(
           label: Text(
             Lable,
@@ -100,9 +103,9 @@ class formField2 extends StatelessWidget {
           ),
           focusColor: Colors.white60,
           enabledBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.white60, width: 2)),
+              borderSide: BorderSide(color: Colors.black54, width: 2)),
           focusedBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.white60, width: 2)),
+              borderSide: BorderSide(color: Colors.black54, width: 2)),
         ));
   }
 }
@@ -200,6 +203,97 @@ class chatCard extends StatelessWidget {
           trailing: Text("${user.LastSeen}"),
         ),
       ),
+    );
+  }
+}
+
+class chatMessageCard extends StatefulWidget {
+  chatMessages messages;
+  chatMessageCard({super.key, required this.messages});
+
+  @override
+  State<chatMessageCard> createState() => _chatMessageCardState();
+}
+
+class _chatMessageCardState extends State<chatMessageCard> {
+  @override
+  Widget build(BuildContext context) {
+    return APIs.meUser.uid == widget.messages.fromID ? greenchat() : bluechat();
+  }
+
+  Widget greenchat() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Flexible(
+          child: Container(
+            padding: EdgeInsets.all(8),
+            margin: EdgeInsets.symmetric(
+                horizontal: MediaQuery.of(context).size.width * .04,
+                vertical: MediaQuery.of(context).size.height * .01),
+            decoration: BoxDecoration(
+                color: Colors.blue.shade100,
+                border: Border.all(color: Colors.blue),
+                borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(20),
+                    topRight: Radius.circular(20),
+                    bottomRight: Radius.circular(20))),
+            child: Text(
+              widget.messages.mesg,
+              style: TextStyle(fontSize: 16),
+            ),
+          ),
+        ),
+        Padding(
+          padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.04),
+          child: Text(widget.messages.sent,
+              style: TextStyle(color: Colors.black54)),
+        ),
+      ],
+    );
+  }
+
+  Widget bluechat() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Padding(
+          padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.04),
+          child: Text(widget.messages.sent,
+              style: TextStyle(color: Colors.black54)),
+        ),
+        Flexible(
+          child: Container(
+            padding: EdgeInsets.all(8),
+            margin: EdgeInsets.symmetric(
+                horizontal: MediaQuery.of(context).size.width * .04,
+                vertical: MediaQuery.of(context).size.height * .01),
+            decoration: BoxDecoration(
+                color: Colors.green.shade100,
+                border: Border.all(color: Colors.green),
+                borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(20),
+                    topRight: Radius.circular(20),
+                    bottomLeft: Radius.circular(20))),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Text(
+                  widget.messages.mesg,
+                  style: TextStyle(fontSize: 17),
+                ),
+                SizedBox(
+                  width: 10,
+                ),
+                Icon(
+                  Icons.done_all_rounded,
+                  size: 15,
+                )
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

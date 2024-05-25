@@ -1,5 +1,5 @@
 import 'package:chatify/Pages/loginPage.dart';
-import 'package:chatify/chatScreen.dart';
+import 'package:chatify/Pages/chatScreen.dart';
 import 'package:firebase_core/firebase_core.dart';
 
 import 'package:flutter/material.dart';

@@ -1,5 +1,12 @@
+import 'dart:convert';
+import 'dart:developer';
+
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:chatify/Models/chatMessage.dart';
 import 'package:chatify/Models/chatUser.dart';
+import 'package:chatify/UiHelper.dart';
+import 'package:chatify/apis.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -13,6 +20,8 @@ class chatScreen extends StatefulWidget {
 }
 
 class _chatScreenState extends State<chatScreen> {
+  List<chatMessages> _list = [];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -27,7 +36,57 @@ class _chatScreenState extends State<chatScreen> {
           ),
         ),
       ),
-      body: _inputTextField(),
+      body: Column(
+        children: [
+          Expanded(
+            child: StreamBuilder<QuerySnapshot>(
+                stream: APIs.getAllMessages(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.active) {
+                    final data = snapshot.data?.docs;
+                    _list.clear();
+
+                    _list.add(chatMessages(
+                        toID: "U4IEhp6QBTXcq65qzBWIIoF5bDy2",
+                        read: '',
+                        type: Type.text,
+                        sent: "01:00 AM",
+                        fromID: "jmbI0wog42bshX3ANFw1vQHzfOh2",
+                        mesg: "hi"));
+                    _list.add(chatMessages(
+                        toID: "jmbI0wog42bshX3ANFw1vQHzfOh2",
+                        read: '',
+                        type: Type.text,
+                        sent: "12:00 AM",
+                        fromID: "U4IEhp6QBTXcq65qzBWIIoF5bDy2",
+                        mesg: "hello"));
+                    if (snapshot.hasData) {
+                      return ListView.builder(
+                        itemCount: _list.length,
+                        physics: BouncingScrollPhysics(),
+                        itemBuilder: (context, index) {
+                          return chatMessageCard(messages: _list[index]);
+                        },
+                      );
+                    } else if (snapshot.hasError) {
+                      return Center(
+                        child: Text(snapshot.hasError.toString()),
+                      );
+                    } else {
+                      return Center(
+                        child: Text('No Data Found!'),
+                      );
+                    }
+                  } else {
+                    return Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+                }),
+          ),
+          _inputTextField(),
+        ],
+      ),
     );
   }
 
@@ -123,7 +182,7 @@ class _chatScreenState extends State<chatScreen> {
             padding: EdgeInsets.only(left: 10, right: 4, top: 10, bottom: 10),
             minWidth: 0,
             shape: CircleBorder(),
-            color: Colors.green,
+            color: Colors.black,
             child: Icon(
               Icons.send,
               color: Colors.white,
