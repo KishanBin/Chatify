@@ -93,6 +93,7 @@ class formField2 extends StatelessWidget {
         validator: validate,
         onSaved: OnSaved,
         keyboardType: TextInputType.multiline,
+        maxLines: null,
         autovalidateMode: AutovalidateMode.always,
         cursorColor: Colors.black,
         style: TextStyle(color: Colors.black, fontSize: 20),
@@ -168,6 +169,7 @@ class chatCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
+      surfaceTintColor: Colors.blue,
       margin: EdgeInsets.symmetric(horizontal: 10.0, vertical: 4.0),
       elevation: 0.5,
       child: InkWell(
@@ -225,38 +227,6 @@ class _chatMessageCardState extends State<chatMessageCard> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Flexible(
-          child: Container(
-            padding: EdgeInsets.all(8),
-            margin: EdgeInsets.symmetric(
-                horizontal: MediaQuery.of(context).size.width * .04,
-                vertical: MediaQuery.of(context).size.height * .01),
-            decoration: BoxDecoration(
-                color: Colors.blue.shade100,
-                border: Border.all(color: Colors.blue),
-                borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(20),
-                    topRight: Radius.circular(20),
-                    bottomRight: Radius.circular(20))),
-            child: Text(
-              widget.messages.mesg,
-              style: TextStyle(fontSize: 16),
-            ),
-          ),
-        ),
-        Padding(
-          padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.04),
-          child: Text(widget.messages.sent,
-              style: TextStyle(color: Colors.black54)),
-        ),
-      ],
-    );
-  }
-
-  Widget bluechat() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
         Padding(
           padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.04),
           child: Text(widget.messages.sent,
@@ -292,6 +262,38 @@ class _chatMessageCardState extends State<chatMessageCard> {
               ],
             ),
           ),
+        ),
+      ],
+    );
+  }
+
+  Widget bluechat() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Flexible(
+          child: Container(
+            padding: EdgeInsets.all(8),
+            margin: EdgeInsets.symmetric(
+                horizontal: MediaQuery.of(context).size.width * .04,
+                vertical: MediaQuery.of(context).size.height * .01),
+            decoration: BoxDecoration(
+                color: Colors.blue.shade100,
+                border: Border.all(color: Colors.blue),
+                borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(20),
+                    topRight: Radius.circular(20),
+                    bottomRight: Radius.circular(20))),
+            child: Text(
+              widget.messages.mesg,
+              style: TextStyle(fontSize: 16),
+            ),
+          ),
+        ),
+        Padding(
+          padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.04),
+          child: Text(widget.messages.sent,
+              style: TextStyle(color: Colors.black54)),
         ),
       ],
     );

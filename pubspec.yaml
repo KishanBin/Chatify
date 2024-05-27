@@ -46,6 +46,12 @@ dependencies:
   cached_network_image: ^3.3.1
   flutter_cache_manager: ^3.3.2
   firebase_storage: ^11.7.5
+  flutter_launcher_icons: ^0.13.1
+
+flutter_launcher_icons:
+  android: true
+  ios: false
+  image_path: "Assets/Image/AppLogo.jpg"
 
 dev_dependencies:
   flutter_test:

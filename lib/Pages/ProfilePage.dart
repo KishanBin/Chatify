@@ -23,7 +23,7 @@ class ProfilePageState extends State<ProfilePage> {
   GlobalKey<FormState> profileFormKey = GlobalKey<FormState>();
 
   File? pickedImage;
-//  String profileImageUrl = "";
+  //String profileImageUrl = "";
 
   @override
   Widget build(BuildContext context) {
@@ -248,7 +248,8 @@ class ProfilePageState extends State<ProfilePage> {
                                         ),
                                         backgroundColor: Colors.black,
                                         behavior: SnackBarBehavior.floating,
-                                        margin: EdgeInsets.only(bottom: 20),
+                                        margin:
+                                            EdgeInsets.fromLTRB(10, 0, 10, 20),
                                       );
                                       ScaffoldMessenger.of(context)
                                           .showSnackBar(snackbar);
@@ -287,6 +288,17 @@ class ProfilePageState extends State<ProfilePage> {
         setState(() {
           pickedImage = tempImage;
           uploadImage();
+
+          var snakbar = const SnackBar(
+            content: Text(
+              'Profile will update in 30 seconds',
+              style: TextStyle(color: Colors.white),
+            ),
+            backgroundColor: Colors.black,
+            behavior: SnackBarBehavior.floating,
+            margin: EdgeInsets.fromLTRB(10, 0, 10, 20),
+          );
+          ScaffoldMessenger.of(context).showSnackBar(snakbar);
         });
       }
     } catch (ex) {
@@ -297,7 +309,9 @@ class ProfilePageState extends State<ProfilePage> {
   uploadImage() async {
     if (pickedImage != null) {
       //creating the reference to the location where you want to upload the image
-      Reference reference = FirebaseStorage.instance.ref().child('Images/');
+      Reference reference = FirebaseStorage.instance
+          .ref()
+          .child('Images/${DateTime.now().toString()}');
       //start the upload task
       UploadTask uploadTask = reference.putFile(pickedImage!);
 

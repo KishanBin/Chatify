@@ -69,7 +69,7 @@ class VerificationState extends State<Verification> {
         Toast.show('OTP sent',
             backgroundColor: Colors.black,
             duration: 3,
-            textStyle: TextStyle(color: Colors.white),
+            textStyle: TextStyle(color: Colors.white, fontSize: 20),
             gravity: Toast.top);
       } else {
         print('otp sent fail');
@@ -160,7 +160,7 @@ class VerificationState extends State<Verification> {
         Form(
           key: _formKey,
           child: formField1(
-            hintText: "OTP",
+            hintText: "Enter 6-Digit OTP",
             controller: otpController,
             validate: (value) {
               if (value == null || value.isEmpty) {

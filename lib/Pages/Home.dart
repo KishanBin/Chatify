@@ -19,9 +19,13 @@ class HomePage extends StatefulWidget {
 }
 
 class HomePageState extends State<HomePage> {
-  static bool isSearching = false;
   var filterUser;
-  List<chatUser> list = [];
+  //for storing all Users
+  List<chatUser> _list = [];
+  //for storing search status
+  static bool _isSearching = false;
+  //for storing search status
+  List<chatUser> searchList = [];
   @override
   void initState() {
     super.initState();
@@ -93,22 +97,25 @@ class HomePageState extends State<HomePage> {
                   }),
             ),
             centerTitle: true,
-            title: isSearching
+            title: _isSearching
                 ? TextField(
                     decoration: InputDecoration(
-                        hintText: " Email....", border: InputBorder.none),
+                        hintText: "Name or Email....",
+                        border: InputBorder.none),
                     autofocus: true,
                     //login to search the user
                     onChanged: (val) {
-                      if (val.isNotEmpty) {
-                        filterUser = FirebaseFirestore.instance
-                            .collection("Users")
-                            .where("Email", isEqualTo: val)
-                            .snapshots();
+                      searchList.clear();
+                      //search logic
+                      for (var i in _list) {
+                        if (i.Name.toLowerCase().contains(val.toLowerCase()) ||
+                            i.Email.toLowerCase().contains(val.toLowerCase())) {
+                          searchList.add(i);
+                        }
+                        setState(() {
+                          searchList;
+                        });
                       }
-                      setState(() {
-                        filterUser;
-                      });
                     },
                   )
                 : Text('Chatify'),
@@ -116,11 +123,11 @@ class HomePageState extends State<HomePage> {
               IconButton(
                   onPressed: () {
                     setState(() {
-                      isSearching = !isSearching;
-                      log("Button " + isSearching.toString());
+                      _isSearching = !_isSearching;
+                      log("Button " + _isSearching.toString());
                     });
                   },
-                  icon: Icon(isSearching
+                  icon: Icon(_isSearching
                       ? CupertinoIcons.clear_circled_solid
                       : Icons.search)),
               SizedBox(
@@ -133,21 +140,23 @@ class HomePageState extends State<HomePage> {
             ],
           ),
           body: StreamBuilder<QuerySnapshot>(
-              stream: isSearching ? filterUser : APIs.getAllUser(),
+              stream: APIs.getAllUser(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.active) {
                   final data = snapshot.data?.docs;
-                  list = data
+                  _list = data
                           ?.map((e) => chatUser
                               .fromJson(e.data() as Map<String, dynamic>))
                           .toList() ??
                       [];
                   if (snapshot.hasData) {
                     return ListView.builder(
-                      itemCount: list.length,
+                      itemCount: _isSearching ? searchList.length : _list.length,
                       physics: BouncingScrollPhysics(),
                       itemBuilder: (context, index) {
-                        return chatCard(user: list[index]);
+                        return chatCard(
+                            user:
+                                _isSearching ? searchList[index] : _list[index]);
                       },
                     );
                   } else if (snapshot.hasError) {

@@ -9,7 +9,7 @@ class chatMessages {
   });
   late final String toID;
   late final String read;
-  late final Type type;
+  late final String type;
   late final String sent;
   late final String fromID;
   late final String mesg;
@@ -17,7 +17,7 @@ class chatMessages {
   chatMessages.fromJson(Map<String, dynamic> json) {
     toID = json['toID'].toString();
     read = json['read'].toString();
-    type = json['type'].toString() == Type.image.name ? Type.image : Type.text;
+    type = json['type'].toString(); //== Type.image.name ? Type.image : Type.text;
     sent = json['sent'].toString();
     fromID = json['fromID'].toString();
     mesg = json['mesg'].toString();
@@ -35,4 +35,4 @@ class chatMessages {
   }
 }
 
-enum Type {text,image}
+// enum Type { text, image }

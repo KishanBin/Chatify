@@ -1,5 +1,6 @@
+
+import 'package:chatify/Models/chatMessage.dart';
 import 'package:chatify/Models/chatUser.dart';
-import 'package:chatify/Pages/Home.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
@@ -47,7 +48,43 @@ class APIs {
         .snapshots();
   }
 
-  static Stream<QuerySnapshot<Map<String, dynamic>>> getAllMessages() {
-    return FirebaseFirestore.instance.collection("Messages").snapshots();
+  //useful for getting conversation ID
+  static String getConversationID(String id) {
+    return meUser.uid.hashCode <= id.hashCode
+        ? '${meUser.uid}_$id'
+        : '${id}_${meUser.uid}';
+  }
+
+  //for getting all messages of a specific conversation form firestore database
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getAllMessages(
+      chatUser user) {
+    return FirebaseFirestore.instance
+        .collection("chats/${getConversationID(user.id)}/Messages/")
+        .snapshots();
+  }
+
+  //for sending messages
+  static Future<void> sendMessage(chatUser chatuser, String msg) async {
+    //Time in millisecond for making chat document id
+    final timeInMs = DateTime.now().microsecondsSinceEpoch.toString();
+
+    //to print the time
+    final now = DateTime.now();
+    final formatter = DateFormat('HH:mm');
+    String formattedTime = formatter.format(now);
+
+    //message to send
+    final message = chatMessages(
+        toID: chatuser.id,
+        read: '',
+        type: '',
+        sent: formattedTime,
+        fromID: meUser.uid,
+        mesg: msg);
+
+    final ref = FirebaseFirestore.instance
+        .collection("chats/${getConversationID(chatuser.id)}/Messages/");
+
+    await ref.doc(timeInMs).set(message.toJson());
   }
 }

@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:developer';
 
 import 'package:cached_network_image/cached_network_image.dart';
@@ -9,8 +8,8 @@ import 'package:chatify/apis.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
+// ignore: must_be_immutable
 class chatScreen extends StatefulWidget {
   chatUser user;
   chatScreen({super.key, required this.user});
@@ -20,6 +19,7 @@ class chatScreen extends StatefulWidget {
 }
 
 class _chatScreenState extends State<chatScreen> {
+  final _textController = TextEditingController();
   List<chatMessages> _list = [];
 
   @override
@@ -40,26 +40,17 @@ class _chatScreenState extends State<chatScreen> {
         children: [
           Expanded(
             child: StreamBuilder<QuerySnapshot>(
-                stream: APIs.getAllMessages(),
+                stream: APIs.getAllMessages(widget.user),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.active) {
                     final data = snapshot.data?.docs;
-                    _list.clear();
 
-                    _list.add(chatMessages(
-                        toID: "U4IEhp6QBTXcq65qzBWIIoF5bDy2",
-                        read: '',
-                        type: Type.text,
-                        sent: "01:00 AM",
-                        fromID: "jmbI0wog42bshX3ANFw1vQHzfOh2",
-                        mesg: "hi"));
-                    _list.add(chatMessages(
-                        toID: "jmbI0wog42bshX3ANFw1vQHzfOh2",
-                        read: '',
-                        type: Type.text,
-                        sent: "12:00 AM",
-                        fromID: "U4IEhp6QBTXcq65qzBWIIoF5bDy2",
-                        mesg: "hello"));
+                    _list = data
+                            ?.map((e) => chatMessages
+                                .fromJson(e.data() as Map<String, dynamic>))
+                            .toList() ??
+                        [];
+
                     if (snapshot.hasData) {
                       return ListView.builder(
                         itemCount: _list.length,
@@ -161,8 +152,11 @@ class _chatScreenState extends State<chatScreen> {
                       onPressed: () {}, icon: Icon(Icons.emoji_emotions)),
                   Expanded(
                     child: TextField(
-                      decoration: InputDecoration(
-                          border: InputBorder.none, hintText: 'Message'),
+                      controller: _textController,
+                      keyboardType: TextInputType.multiline,
+                      minLines: null,
+                      decoration: const InputDecoration(
+                          border: InputBorder.none, hintText: 'Message...'),
                     ),
                   ),
                   IconButton(
@@ -178,7 +172,16 @@ class _chatScreenState extends State<chatScreen> {
             ),
           ),
           MaterialButton(
-            onPressed: () {},
+            onPressed: () {
+              if (_textController.text.isNotEmpty) {
+                APIs.sendMessage(widget.user, _textController.text);
+                log('function called');
+                setState(() {});
+                _textController.text = '';
+              } else {
+                log('Field is Empty');
+              }
+            },
             padding: EdgeInsets.only(left: 10, right: 4, top: 10, bottom: 10),
             minWidth: 0,
             shape: CircleBorder(),

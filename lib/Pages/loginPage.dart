@@ -1,4 +1,5 @@
 import 'package:chatify/Pages/Home.dart';
+import 'package:chatify/Pages/forgotPassword.dart';
 import 'package:chatify/Pages/registerPage.dart';
 import 'package:chatify/UiHelper.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -144,21 +145,36 @@ class LoginPageState extends State<LoginPage> {
                 return null;
               },
               controller: _emailController),
-          formField1(
-              hintText: 'Password',
-              obsecureText: true,
-              validate: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please Enter the Password';
-                }
-                return null;
-              },
-              controller: _passWordContorller),
+          Column(
+            children: [
+              formField1(
+                  hintText: 'Password',
+                  obsecureText: true,
+                  validate: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please Enter the Password';
+                    }
+                    return null;
+                  },
+                  controller: _passWordContorller),
+              //forgot Password Button
+              TextButton(
+                  onPressed: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => forgotPassword())),
+                  child: Text(
+                    'Forgot Password ?',
+                    style: TextStyle(color: Colors.white),
+                  ))
+            ],
+          ),
         ],
       ),
     );
   }
 
+  //To check the user is logined or not
   void checkUser() async {
     var pref = await SharedPreferences.getInstance();
     var check = pref.getString(loginKey);
