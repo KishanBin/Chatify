@@ -1,4 +1,3 @@
-
 import 'package:chatify/Models/chatMessage.dart';
 import 'package:chatify/Models/chatUser.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -59,32 +58,47 @@ class APIs {
   static Stream<QuerySnapshot<Map<String, dynamic>>> getAllMessages(
       chatUser user) {
     return FirebaseFirestore.instance
-        .collection("chats/${getConversationID(user.id)}/Messages/")
+        .collection("chats/${getConversationID(user.id)}/Messages/").orderBy('sent',descending: true)
         .snapshots();
   }
 
   //for sending messages
-  static Future<void> sendMessage(chatUser chatuser, String msg) async {
+  static Future<void> sendMessage(chatUser chatuser, String msg,Type type) async {
     //Time in millisecond for making chat document id
-    final timeInMs = DateTime.now().microsecondsSinceEpoch.toString();
+    final time = DateTime.now().microsecondsSinceEpoch.toString();
 
     //to print the time
-    final now = DateTime.now();
-    final formatter = DateFormat('HH:mm');
-    String formattedTime = formatter.format(now);
+    // final now = DateTime.now();
+    // final formatter = DateFormat('HH:mm');
+    // String formattedTime = formatter.format(now);
 
     //message to send
     final message = chatMessages(
         toID: chatuser.id,
         read: '',
-        type: '',
-        sent: formattedTime,
+        type: type,
+        sent: time,
         fromID: meUser.uid,
         mesg: msg);
 
     final ref = FirebaseFirestore.instance
         .collection("chats/${getConversationID(chatuser.id)}/Messages/");
 
-    await ref.doc(timeInMs).set(message.toJson());
+    await ref.doc(time).set(message.toJson());
+  }
+
+  //function to formate the time
+  static String getFormatedTime(String time) {
+    final datetime = DateTime.fromMicrosecondsSinceEpoch(int.parse(time));
+    final String formattedTime = DateFormat('HH:mm').format(datetime);
+    return formattedTime;
+  }
+
+  // to update the read status of user from receiver side
+  static Future<void> updateReadMessage(chatMessages messages) async {
+    FirebaseFirestore.instance
+        .collection("chats/${getConversationID(messages.fromID)}/Messages/")
+        .doc(messages.sent)
+        .update({"read": DateTime.now().microsecondsSinceEpoch.toString()});
   }
 }

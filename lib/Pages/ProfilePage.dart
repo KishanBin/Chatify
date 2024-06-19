@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 class ProfilePage extends StatefulWidget {
-  ProfilePage({
+  const ProfilePage({
     super.key,
   });
 
@@ -281,13 +281,13 @@ class ProfilePageState extends State<ProfilePage> {
       final image =
           await ImagePicker().pickImage(source: source, imageQuality: 80);
       if (image == null) {
-        return;
+        return null;
       } else {
         final tempImage = File(image.path);
 
         setState(() {
           pickedImage = tempImage;
-          uploadImage();
+          _uploadImage();
 
           var snakbar = const SnackBar(
             content: Text(
@@ -306,12 +306,11 @@ class ProfilePageState extends State<ProfilePage> {
     }
   }
 
-  uploadImage() async {
+  _uploadImage() async {
     if (pickedImage != null) {
       //creating the reference to the location where you want to upload the image
-      Reference reference = FirebaseStorage.instance
-          .ref()
-          .child('Images/${DateTime.now().toString()}');
+      Reference reference =
+          FirebaseStorage.instance.ref().child('Images/${APIs.meUser.uid}');
       //start the upload task
       UploadTask uploadTask = reference.putFile(pickedImage!);
 

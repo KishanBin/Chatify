@@ -151,12 +151,14 @@ class HomePageState extends State<HomePage> {
                       [];
                   if (snapshot.hasData) {
                     return ListView.builder(
-                      itemCount: _isSearching ? searchList.length : _list.length,
+                      itemCount:
+                          _isSearching ? searchList.length : _list.length,
                       physics: BouncingScrollPhysics(),
                       itemBuilder: (context, index) {
                         return chatCard(
-                            user:
-                                _isSearching ? searchList[index] : _list[index]);
+                            user: _isSearching
+                                ? searchList[index]
+                                : _list[index]);
                       },
                     );
                   } else if (snapshot.hasError) {

@@ -1,7 +1,6 @@
 import 'package:chatify/apis.dart';
 import 'package:chatify/Pages/loginPage.dart';
 import 'package:chatify/UiHelper.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:email_otp/email_otp.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';

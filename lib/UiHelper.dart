@@ -1,10 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chatify/Models/chatMessage.dart';
 import 'package:chatify/Models/chatUser.dart';
-import 'package:chatify/Pages/Home.dart';
 import 'package:chatify/Pages/chatScreen.dart';
 import 'package:chatify/apis.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 // Custom widgets to create Heading
@@ -183,20 +181,50 @@ class chatCard extends StatelessWidget {
         },
         child: ListTile(
           leading: user.Image != ""
-              ? CircleAvatar(
-                  child: CachedNetworkImage(
-                    imageUrl: "${user.Image}",
-                    imageBuilder: (context, imageProvider) => Container(
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        image: DecorationImage(
-                            image: imageProvider, fit: BoxFit.cover),
+              ? InkWell(
+                  onTap: () {
+                    showDialog(
+                        context: context,
+                        builder: (context) {
+                          return SizedBox(
+                            height: 400,
+                            width: 400,
+                            child: AlertDialog(
+                              title: Text(user.Name),
+                              content: CachedNetworkImage(
+                                imageUrl: "${user.Image}",
+                                placeholder: (context, url) =>
+                                    Center(child: const Text("No profile")),
+                                errorWidget: (context, url, error) =>
+                                    Icon(Icons.error),
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  child: Text('Ok'),
+                                )
+                              ],
+                            ),
+                          );
+                        });
+                  },
+                  child: CircleAvatar(
+                    child: CachedNetworkImage(
+                      imageUrl: "${user.Image}",
+                      imageBuilder: (context, imageProvider) => Container(
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          image: DecorationImage(
+                              image: imageProvider, fit: BoxFit.cover),
+                        ),
                       ),
+                      placeholder: (context, url) => CircularProgressIndicator(
+                        color: Colors.black,
+                      ),
+                      errorWidget: (context, url, error) => Icon(Icons.error),
                     ),
-                    placeholder: (context, url) => CircularProgressIndicator(
-                      color: Colors.black,
-                    ),
-                    errorWidget: (context, url, error) => Icon(Icons.error),
                   ),
                 )
               : Image.asset('Assets/Image/defaultAvatar.png'),
@@ -229,7 +257,7 @@ class _chatMessageCardState extends State<chatMessageCard> {
       children: [
         Padding(
           padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.04),
-          child: Text(widget.messages.sent,
+          child: Text(APIs.getFormatedTime(widget.messages.sent),
               style: TextStyle(color: Colors.black54)),
         ),
         Flexible(
@@ -248,17 +276,27 @@ class _chatMessageCardState extends State<chatMessageCard> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                Text(
-                  widget.messages.mesg,
-                  style: TextStyle(fontSize: 17),
-                ),
+                widget.messages.type == Type.text
+                    ? Text(
+                        widget.messages.mesg,
+                        style: TextStyle(fontSize: 17),
+                      )
+                    : CachedNetworkImage(
+                        imageUrl: widget.messages.mesg,
+                        errorWidget: (context, url, error) => Icon(
+                          Icons.image,
+                          size: 70,
+                        ),
+                      ),
                 SizedBox(
                   width: 10,
                 ),
-                Icon(
-                  Icons.done_all_rounded,
-                  size: 15,
-                )
+                if (widget.messages.read.isNotEmpty)
+                  const Icon(
+                    Icons.done_all_rounded,
+                    size: 15,
+                    color: Colors.blue,
+                  )
               ],
             ),
           ),
@@ -268,6 +306,9 @@ class _chatMessageCardState extends State<chatMessageCard> {
   }
 
   Widget bluechat() {
+    if (widget.messages.read.isEmpty) {
+      APIs.updateReadMessage(widget.messages);
+    }
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -284,15 +325,23 @@ class _chatMessageCardState extends State<chatMessageCard> {
                     topLeft: Radius.circular(20),
                     topRight: Radius.circular(20),
                     bottomRight: Radius.circular(20))),
-            child: Text(
-              widget.messages.mesg,
-              style: TextStyle(fontSize: 16),
-            ),
+            child: widget.messages.type == Type.text
+                ? Text(
+                    widget.messages.mesg,
+                    style: TextStyle(fontSize: 17),
+                  )
+                : CachedNetworkImage(
+                    imageUrl: widget.messages.mesg,
+                    errorWidget: (context, url, error) => Icon(
+                      Icons.image,
+                      size: 70,
+                    ),
+                  ),
           ),
         ),
         Padding(
           padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.04),
-          child: Text(widget.messages.sent,
+          child: Text(APIs.getFormatedTime(widget.messages.sent),
               style: TextStyle(color: Colors.black54)),
         ),
       ],
